@@ -155,6 +155,7 @@ function startServer() {
 // TODO set the exit codes correctly based off err/non-error -- pass in error
 // TODO router /api/1/BOWLER --
 // GET
+// get all bowlers
 app.get('/api/1/bowler', function (req,res,next) {
     queryCollection('SELECT * FROM root r')
         .then(function (results) {
@@ -162,6 +163,15 @@ app.get('/api/1/bowler', function (req,res,next) {
         });
 });
 
+// get a specific bowler ID
+app.get('/api/1/bowler/:bowlerId', function (req, res, next) {
+    var query = `SELECT * FROM root r WHERE r.id="${req.params.bowlerId}"`
+    console.log(query);
+    queryCollection(query)
+        .then(function (results) {
+            res.send(results);
+        });
+});
 
 // POST
 // TODO add a validate data function prior to POSTs for verifying the data meets minimum requirements/constraints.
@@ -189,9 +199,14 @@ app.delete('/api/1/bowler', function (req, res, next) {
         });
 });
 
-// REMOVE cleanup() FOR PROD -- Deletes the DB so i can run through testing/dev cycles quickly
-// query the database and collection to make sure they exist -- otherwise create them.
-cleanup()
-    .then(() => getDatabase())
+// PROD setup and launching of the backend -- query the database and collection to make sure they exist -- otherwise create them.
+getDatabase()
     .then(() => getCollection())
     .then(() => startServer());
+
+// REMOVE cleanup() FOR PROD -- Deletes the DB so i can run through testing/dev cycles quickly
+// query the database and collection to make sure they exist -- otherwise create them.
+//cleanup()
+//    .then(() => getDatabase())
+//    .then(() => getCollection())
+//    .then(() => startServer());
